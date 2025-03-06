@@ -544,8 +544,8 @@ vim.keymap.set("n", "<C-j>", "<Cmd>wincmd j<CR>", { desc = "Go to the bottom win
 vim.keymap.set("t", "<C-k>", [[<C-\><C-n><Cmd>wincmd k<CR>]], { desc = "Go to the top window (code)" })
 
 -- File explorer with NvimTree
-vim.keymap.set("n", "<Leader>f", ":NvimTreeFindFile<Return>", opts)
-vim.keymap.set("n", "<Leader>t", ":NvimTreeToggle<Return>", opts)
+--vim.keymap.set("n", "<Leader>f", ":NvimTreeFindFile<Return>", opts)
+--vim.keymap.set("n", "<Leader>t", ":NvimTreeToggle<Return>", opts)
 
 --Git Worktree
 vim.keymap.set(

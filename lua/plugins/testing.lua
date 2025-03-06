@@ -104,63 +104,63 @@ return {
     end,
     keys = {
       {
-        ";tt",
+        "<leader>tt",
         function()
           require("neotest").run.run(vim.fn.expand("%"))
         end,
         desc = "Testes: Executar Arquivo",
       },
       {
-        ";tr",
+        "<leader>tr",
         function()
           require("neotest").run.run()
         end,
         desc = "Testes: Executar Teste Mais Próximo",
       },
       {
-        ";tT",
+        "<leader>tT",
         function()
           require("neotest").run.run(vim.loop.cwd())
         end,
         desc = "Testes: Executar Todos",
       },
       {
-        ";tl",
+        "<leader>tl",
         function()
           require("neotest").run.run_last()
         end,
         desc = "Testes: Repetir Último",
       },
       {
-        ";ts",
+        "<leader>ts",
         function()
           require("neotest").summary.toggle()
         end,
         desc = "Testes: Alternar Resumo",
       },
       {
-        ";to",
+        "<leader>to",
         function()
           require("neotest").output.open({ enter = true, auto_close = true })
         end,
         desc = "Testes: Mostrar Output",
       },
       {
-        ";tO",
+        "<leader>tO",
         function()
           require("neotest").output_panel.toggle()
         end,
         desc = "Testes: Painel de Output",
       },
       {
-        ";tS",
+        "<leader>tS",
         function()
           require("neotest").run.stop()
         end,
         desc = "Testes: Parar Execução",
       },
       {
-        ";tc",
+        "<leader>tc",
         function()
           require("neotest").run.run({
             strategy = "integrated",
