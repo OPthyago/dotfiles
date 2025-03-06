@@ -519,7 +519,7 @@ vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "Open float
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
 
 -- Terminal keymaps
-local function toggle_terminal()
+local function toggle_bottom_terminal()
   local current_tab = 0 -- 0 = tabpage atual
   local terminal_win = nil
 
@@ -539,10 +539,37 @@ local function toggle_terminal()
   end
 end
 
-vim.keymap.set("n", "<leader>T", toggle_terminal, { desc = "Toggle bottom terminal" })
+vim.keymap.set("n", "<leader>bt", toggle_bottom_terminal, { desc = "Toggle bottom terminal" })
 vim.keymap.set("n", "<C-j>", "<Cmd>wincmd j<CR>", { desc = "Go to the bottom window (terminal)" })
 vim.keymap.set("t", "<C-k>", [[<C-\><C-n><Cmd>wincmd k<CR>]], { desc = "Go to the top window (code)" })
 
 -- File explorer with NvimTree
 vim.keymap.set("n", "<Leader>f", ":NvimTreeFindFile<Return>", opts)
 vim.keymap.set("n", "<Leader>t", ":NvimTreeToggle<Return>", opts)
+
+--Git Worktree
+vim.keymap.set(
+  "n",
+  "<leader>gwl",
+  "<CMD>lua require('telescope').extensions.git_worktree.git_worktrees()<CR>",
+  { desc = "List git worktrees" }
+)
+vim.keymap.set(
+  "n",
+  "<leader>gwc",
+  "<CMD>lua require('telescope').extensions.git_worktree.create_git_worktree()<CR>",
+  { desc = "Create git worktree" }
+)
+
+-- create a key map with <leader>gwd to delete a worktree
+vim.keymap.set(
+  "n",
+  "<leader>gwd",
+  "<CMD>lua require('telescope').extensions.git_worktree.delete_git_worktree()<CR>",
+  { desc = "Delete git worktree" }
+)
+-- Mover 10 linhas para baixo com Ctrl+Shift+j
+vim.keymap.set({ "n", "v" }, "<C-S-j>", "10j", { noremap = true, silent = true })
+
+-- Mover 10 linhas para cima com Ctrl+Shift+k
+vim.keymap.set({ "n", "v" }, "<C-S-k>", "10k", { noremap = true, silent = true })

@@ -24,11 +24,12 @@ return {
           require("dap-vscode-js").setup({
             debugger_path = vim.fn.stdpath("data") .. "/lazy/vscode-js-debug",
             adapters = {
-              "chrome",
               "pwa-node",
               "pwa-chrome",
-              "pwa-msedge",
-              "node-terminal",
+              {
+                type = "pwa-chrome",
+                port = 9222,
+              },
             },
           })
         end,
@@ -36,19 +37,47 @@ return {
     },
     config = function()
       local dap = require("dap")
+      local dapui = require("dapui")
       local Config = require("lazyvim.config")
 
-      -- Configuração de ícones
+      -- Define o nível de log para DEBUG para obter mais informações
+      dap.set_log_level("DEBUG")
+
+      -- Inicializa o dap-ui com a configuração padrão
+      dapui.setup()
+
+      -- Configuração de ícones para o DAP
       vim.api.nvim_set_hl(0, "DapStoppedLine", { default = true, link = "Visual" })
       for name, sign in pairs(Config.icons.dap) do
         sign = type(sign) == "table" and sign or { sign }
-        vim.fn.sign_define(
-          "Dap" .. name,
-          { text = sign[1], texthl = sign[2] or "DiagnosticInfo", linehl = sign[3], numhl = sign[3] }
-        )
+        vim.fn.sign_define("Dap" .. name, {
+          text = sign[1],
+          texthl = sign[2] or "DiagnosticInfo",
+          linehl = sign[3],
+          numhl = sign[3],
+        })
       end
 
-      -- Configurações específicas para JavaScript/TypeScript
+      -- Configuração do adaptador para Chrome
+      dap.adapters["pwa-chrome"] = {
+        type = "server",
+        host = "localhost",
+        port = 9222,
+        executable = {
+          command = "chrome", -- verifique se o comando "chrome" está no PATH; em alguns sistemas pode ser "google-chrome" ou "chromium"
+          args = {
+            "--remote-debugging-port=9222",
+            "--user-data-dir=${workspaceFolder}/.vscode/chrome",
+          },
+        },
+      }
+
+      -- Mapeia "node-terminal" para "pwa-node" (que já está configurado com porta)
+      if not dap.adapters["node-terminal"] then
+        dap.adapters["node-terminal"] = dap.adapters["pwa-node"]
+      end
+
+      -- Configurações para linguagens baseadas em JS
       for _, language in ipairs(js_based_languages) do
         dap.configurations[language] = {
           {
@@ -74,69 +103,43 @@ return {
             name = "Launch Chrome",
             url = "http://localhost:3000",
             webRoot = "${workspaceFolder}",
+            port = 9222,
             userDataDir = "${workspaceFolder}/.vscode/chrome",
             sourceMaps = true,
           },
         }
       end
 
-      -- Configuração do adaptador JS
-      require("dap.ext.vscode").load_launchjs(nil, {
-        ["pwa-node"] = js_based_languages,
-        ["node"] = js_based_languages,
-        ["chrome"] = js_based_languages,
-      })
+      -- Se existir um arquivo .vscode/launch.json, carrega-o
+      if vim.fn.filereadable(".vscode/launch.json") then
+        require("dap.ext.vscode").load_launchjs(nil, {
+          ["pwa-node"] = js_based_languages,
+          ["pwa-chrome"] = js_based_languages,
+          ["node-terminal"] = js_based_languages,
+        })
+      end
+
+      -- Keymap para iniciar a depuração
+      vim.keymap.set("n", "<leader>da", function()
+        vim.notify("Iniciando sessão de debug...", vim.log.levels.INFO)
+        dap.continue()
+      end, { desc = "Start Debugging" })
+
+      -- Keymap para abrir/fechar a interface do DAP UI
+      vim.keymap.set("n", "<leader>du", function()
+        dapui.toggle()
+      end, { desc = "Toggle Debug UI" })
+
+      -- Keymap para abrir/fechar o REPL do DAP
+      vim.keymap.set("n", "<leader>dr", function()
+        dap.repl.toggle()
+      end, { desc = "Toggle Debug REPL" })
+
+      -- Keymap para abrir o arquivo de log do DAP para inspeção
+      vim.keymap.set("n", "<leader>dl", function()
+        local log_file = vim.fn.stdpath("data") .. "/dap.log"
+        vim.cmd("edit " .. log_file)
+      end, { desc = "Open DAP Log" })
     end,
-    keys = {
-      {
-        "<leader>dc",
-        function()
-          require("dap").continue()
-        end,
-        desc = "Start/Continue",
-      },
-      {
-        "<leader>db",
-        function()
-          require("dap").toggle_breakpoint()
-        end,
-        desc = "Toggle Breakpoint",
-      },
-      {
-        "<leader>dO",
-        function()
-          require("dap").step_out()
-        end,
-        desc = "Step Out",
-      },
-      {
-        "<leader>do",
-        function()
-          require("dap").step_over()
-        end,
-        desc = "Step Over",
-      },
-      {
-        "<leader>di",
-        function()
-          require("dap").step_into()
-        end,
-        desc = "Step Into",
-      },
-      {
-        "<leader>dr",
-        function()
-          require("dap").repl.open()
-        end,
-        desc = "Open REPL",
-      },
-      {
-        "<leader>dl",
-        function()
-          require("dap").run_last()
-        end,
-        desc = "Run Last",
-      },
-    },
   },
 }

@@ -16,11 +16,18 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
   spec = {
-    { "LazyVim/LazyVim", import = "lazyvim.plugins", opts = {
-      colorscheme = "catppuccin-mocha",
-    } },
-    { import = "lazyvim.plugins.extras.linting.eslint" },
-    { import = "lazyvim.plugins.extras.formatting.prettier" },
+    {
+      "LazyVim/LazyVim",
+      import = "lazyvim.plugins",
+      opts = {
+        colorscheme = "catppuccin-mocha",
+
+        format_on_save = false,
+        lint_on_save = false,
+      },
+    },
+    --{ import = "lazyvim.plugins.extras.linting.eslint", opts = { format_on_save = false } },
+    --{ import = "lazyvim.plugins.extras.formatting.prettier", opts = { format_on_save = false } },
     { import = "lazyvim.plugins.extras.lang.typescript" },
     { import = "lazyvim.plugins.extras.lang.json" },
     { import = "lazyvim.plugins.extras.lang.tailwind" },
