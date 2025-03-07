@@ -24,12 +24,8 @@ return {
           require("dap-vscode-js").setup({
             debugger_path = vim.fn.stdpath("data") .. "/lazy/vscode-js-debug",
             adapters = {
-              "pwa-node",
-              "pwa-chrome",
-              {
-                type = "pwa-chrome",
-                port = 9222,
-              },
+              { type = "pwa-node", port = 9223 },
+              { type = "pwa-chrome", port = 9222 },
             },
           })
         end,
@@ -40,13 +36,10 @@ return {
       local dapui = require("dapui")
       local Config = require("lazyvim.config")
 
-      -- Define o nível de log para DEBUG para obter mais informações
       dap.set_log_level("DEBUG")
-
-      -- Inicializa o dap-ui com a configuração padrão
       dapui.setup()
 
-      -- Configuração de ícones para o DAP
+      -- Configuração de ícones
       vim.api.nvim_set_hl(0, "DapStoppedLine", { default = true, link = "Visual" })
       for name, sign in pairs(Config.icons.dap) do
         sign = type(sign) == "table" and sign or { sign }
@@ -58,44 +51,57 @@ return {
         })
       end
 
-      -- Configuração do adaptador para Chrome
-      dap.adapters["pwa-chrome"] = {
-        type = "server",
-        host = "localhost",
-        port = 9222,
-        executable = {
-          command = "chrome", -- verifique se o comando "chrome" está no PATH; em alguns sistemas pode ser "google-chrome" ou "chromium"
-          args = {
-            "--remote-debugging-port=9222",
-            "--user-data-dir=${workspaceFolder}/.vscode/chrome",
-          },
-        },
-      }
-
-      -- Mapeia "node-terminal" para "pwa-node" (que já está configurado com porta)
-      if not dap.adapters["node-terminal"] then
-        dap.adapters["node-terminal"] = dap.adapters["pwa-node"]
-      end
-
       -- Configurações para linguagens baseadas em JS
       for _, language in ipairs(js_based_languages) do
         dap.configurations[language] = {
           {
             type = "pwa-node",
             request = "launch",
-            name = "Launch File",
-            program = "${file}",
+            name = "Debug Current Test",
+            runtimeExecutable = "node",
+            runtimeArgs = {
+              "--experimental-vm-modules",
+              "--no-warnings",
+              "${workspaceFolder}/node_modules/.bin/jest",
+              "${file}",
+              "--runInBand",
+              "--watch",
+            },
             cwd = "${workspaceFolder}",
-            sourceMaps = true,
+            console = "integratedTerminal",
+            internalConsoleOptions = "neverOpen",
             skipFiles = { "<node_internals>/**" },
+            sourceMaps = true,
+            env = {
+              NODE_OPTIONS = "--experimental-vm-modules --no-warnings",
+              TS_JEST_DISABLE_VER_CHECKER = "true",
+            },
+            resolveSourceMapLocations = {
+              "${workspaceFolder}/**",
+              "!**/node_modules/**",
+            },
           },
           {
             type = "pwa-node",
-            request = "attach",
-            name = "Attach to Process",
-            processId = require("dap.utils").pick_process,
+            request = "launch",
+            name = "Run All Tests",
+            runtimeExecutable = "node",
+            runtimeArgs = {
+              "--experimental-vm-modules",
+              "--no-warnings",
+              "${workspaceFolder}/node_modules/.bin/jest",
+              "--runInBand",
+              "--watchAll",
+            },
             cwd = "${workspaceFolder}",
+            console = "integratedTerminal",
+            internalConsoleOptions = "neverOpen",
+            skipFiles = { "<node_internals>/**" },
             sourceMaps = true,
+            env = {
+              NODE_OPTIONS = "--experimental-vm-modules --no-warnings",
+              TS_JEST_DISABLE_VER_CHECKER = "true",
+            },
           },
           {
             type = "pwa-chrome",
@@ -103,43 +109,50 @@ return {
             name = "Launch Chrome",
             url = "http://localhost:3000",
             webRoot = "${workspaceFolder}",
-            port = 9222,
             userDataDir = "${workspaceFolder}/.vscode/chrome",
             sourceMaps = true,
           },
         }
       end
 
-      -- Se existir um arquivo .vscode/launch.json, carrega-o
+      -- Carregar launch.json
       if vim.fn.filereadable(".vscode/launch.json") then
         require("dap.ext.vscode").load_launchjs(nil, {
           ["pwa-node"] = js_based_languages,
-          ["pwa-chrome"] = js_based_languages,
-          ["node-terminal"] = js_based_languages,
+          ["pva-chrome"] = js_based_languages,
         })
       end
 
-      -- Keymap para iniciar a depuração
+      -- Keymaps
       vim.keymap.set("n", "<leader>da", function()
         vim.notify("Iniciando sessão de debug...", vim.log.levels.INFO)
         dap.continue()
       end, { desc = "Start Debugging" })
 
-      -- Keymap para abrir/fechar a interface do DAP UI
       vim.keymap.set("n", "<leader>du", function()
         dapui.toggle()
       end, { desc = "Toggle Debug UI" })
 
-      -- Keymap para abrir/fechar o REPL do DAP
       vim.keymap.set("n", "<leader>dr", function()
         dap.repl.toggle()
       end, { desc = "Toggle Debug REPL" })
 
-      -- Keymap para abrir o arquivo de log do DAP para inspeção
       vim.keymap.set("n", "<leader>dl", function()
         local log_file = vim.fn.stdpath("data") .. "/dap.log"
         vim.cmd("edit " .. log_file)
       end, { desc = "Open DAP Log" })
+      -- Breakpoints
+      vim.keymap.set("n", "<leader>db", function()
+        require("dap").toggle_breakpoint()
+      end, { desc = "Toggle Breakpoint" })
+
+      vim.keymap.set("n", "<leader>dB", function()
+        require("dap").set_breakpoint(vim.fn.input("Condition: "))
+      end, { desc = "Conditional Breakpoint" })
+
+      vim.keymap.set("n", "<leader>dlp", function()
+        require("dap").set_breakpoint(nil, nil, vim.fn.input("Log message: "))
+      end, { desc = "Logpoint" })
     end,
   },
 }
