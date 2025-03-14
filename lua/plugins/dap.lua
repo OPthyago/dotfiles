@@ -63,14 +63,29 @@ return {
             print("No scripts found in package.json")
             return
           end
+
+          -- Filter out scripts related to build, deploy, or release by checking both the script name and its command
           local script_names = {}
-          for script, _ in pairs(package_data.scripts) do
-            table.insert(script_names, script)
+          for script, cmd in pairs(package_data.scripts) do
+            local lower_script = string.lower(script)
+            local lower_cmd = string.lower(cmd)
+            if
+              not (
+                lower_script:find("deploy")
+                or lower_script:find("release")
+                or lower_cmd:find("deploy")
+                or lower_cmd:find("release")
+              )
+            then
+              table.insert(script_names, script)
+            end
           end
+
           if #script_names == 0 then
-            print("No script found in package.json")
+            print("No local run scripts found in package.json")
             return
           end
+
           table.sort(script_names)
           local choices = { "Choose a script:" }
           for i, script in ipairs(script_names) do
@@ -81,8 +96,9 @@ return {
             print("Invalid option")
             return
           end
-
           local selected_script = script_names[script_choice]
+
+          -- Check if the script command contains "node --inspect". If not, add the flag via NODE_OPTIONS.
           local script_command = package_data.scripts[selected_script]
           local config_env = {}
           if not script_command:find("node%s+%-%-inspect") then
