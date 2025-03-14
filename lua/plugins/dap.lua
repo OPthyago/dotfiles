@@ -35,9 +35,79 @@ return {
     {
       "<leader>da",
       function()
-        require("dap").continue()
+        local dap = require("dap")
+        local opt = vim.fn.inputlist({
+          "Select the configuration:",
+          "1. Default (DAP)",
+          "2. Custom Setting",
+        })
+
+        if opt == 1 then
+          dap.continue()
+          return
+        elseif opt == 2 then
+          -- Prompt the user to select a workspace folder, read the package.json file, and extract the scripts
+          local folder = vim.fn.input("Workspace Folder: ", vim.loop.cwd(), "file")
+          local package_json_path = folder .. "/package.json"
+          if vim.fn.filereadable(package_json_path) == 0 then
+            print("package.json not found in " .. folder)
+            return
+          end
+          local content = table.concat(vim.fn.readfile(package_json_path), "\n")
+          local ok, package_data = pcall(vim.fn.json_decode, content)
+          if not ok then
+            print("Failed to parse package.json")
+            return
+          end
+          if not package_data.scripts then
+            print("No scripts found in package.json")
+            return
+          end
+          local script_names = {}
+          for script, _ in pairs(package_data.scripts) do
+            table.insert(script_names, script)
+          end
+          if #script_names == 0 then
+            print("No script found in package.json")
+            return
+          end
+          table.sort(script_names)
+          local choices = { "Choose a script:" }
+          for i, script in ipairs(script_names) do
+            table.insert(choices, string.format("%d. %s", i, script))
+          end
+          local script_choice = vim.fn.inputlist(choices)
+          if script_choice < 1 or script_choice > #script_names then
+            print("Invalid option")
+            return
+          end
+
+          local selected_script = script_names[script_choice]
+          local script_command = package_data.scripts[selected_script]
+          local config_env = {}
+          if not script_command:find("node%s+%-%-inspect") then
+            config_env.NODE_OPTIONS = "--inspect"
+          end
+
+          local selected_config = {
+            type = "pwa-node",
+            request = "launch",
+            name = "NPM Script: " .. selected_script,
+            runtimeExecutable = "npm",
+            runtimeArgs = { "run", selected_script },
+            cwd = folder,
+            console = "integratedTerminal",
+            internalConsoleOptions = "neverOpen",
+            env = config_env,
+          }
+          dap.run(selected_config)
+          return
+        else
+          print("Invalid option")
+          return
+        end
       end,
-      desc = "Start debugging",
+      desc = "Start debugging (choose npm script)",
     },
     {
       "<leader>dC",
@@ -130,6 +200,13 @@ return {
       end,
       desc = "Widgets",
     },
+    {
+      "<leader>du",
+      function()
+        require("dapui").toggle()
+      end,
+      desc = "Toggle UI",
+    },
   },
   config = function()
     local js_filetypes = { "typescript", "javascript", "typescriptreact", "javascriptreact" }
@@ -139,7 +216,7 @@ return {
     local vscode = require("dap.ext.vscode")
 
     --Setting the log level
-    --dap.set_log_level("TRACE") -- uncomment this line to enable comments
+    dap.set_log_level("TRACE") -- uncomment this line to enable comments
 
     --UI Setting
     vim.api.nvim_set_hl(0, "DapStoppedLine", { default = true, link = "Visual" })
@@ -218,6 +295,18 @@ return {
           },
         }
       end
+
+      -- uncomment to enable jest testing directly in the DAP default
+      --table.insert(dap.configurations[language], {
+      --  type = "pwa-node",
+      --  request = "launch",
+      --  name = "Jest Tests",
+      --  runtimeExecutable = "npm",
+      --  runtimeArgs = { "run", "test", "--", "--watch" },
+      --  cwd = "${workspaceFolder}",
+      --  console = "integratedTerminal",
+      --  internalConsoleOptions = "neverOpen",
+      --})
     end
 
     -- Listeners to open and close dapui
