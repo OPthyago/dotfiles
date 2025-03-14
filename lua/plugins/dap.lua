@@ -10,6 +10,55 @@ return {
       end,
     },
   },
+  keys = {
+    {
+      vim.keymap.set("n", "<leader>da", function()
+        vim.notify("Starting debug session...", vim.log.levels.INFO)
+        require("dap").continue()
+      end, { desc = "Start Debugging" }),
+    },
+    {
+      vim.keymap.set("n", "<leader>du", function()
+        require("dapui").toggle()
+      end, { desc = "Toggle Debug UI" }),
+    },
+    {
+      vim.keymap.set("n", "<leader>dr", function()
+        require("dap").repl.toggle()
+      end, { desc = "Toggle Debug REPL" }),
+    },
+    {
+      vim.keymap.set("n", "<leader>dl", function()
+        local log_file = vim.fn.stdpath("data") .. "/dap.log"
+        vim.cmd("edit " .. log_file)
+      end, { desc = "Open DAP Log" }),
+    },
+    {
+      vim.keymap.set("n", "<leader>dc", require("dap").continue, { desc = "Continue" }),
+    },
+    {
+      vim.keymap.set("n", "<leader>do", require("dap").step_over, { desc = "Step Over" }),
+    },
+    {
+
+      vim.keymap.set("n", "<leader>di", require("dap").step_into, { desc = "Step Into" }),
+    },
+    {
+      vim.keymap.set("n", "<leader>dlp", function()
+        require("dap").set_breakpoint(nil, nil, vim.fn.input("Log message: "))
+      end, { desc = "Logpoint" }),
+    },
+    {
+      vim.keymap.set("n", "<leader>db", function()
+        require("dap").toggle_breakpoint()
+      end, { desc = "Toggle Breakpoint" }),
+    },
+    {
+      vim.keymap.set("n", "<leader>dB", function()
+        require("dap").set_breakpoint(vim.fn.input("Condition: "))
+      end, { desc = "Conditional Breakpoint" }),
+    },
+  },
   config = function()
     local js_filetypes = { "typescript", "javascript", "typescriptreact", "javascriptreact" }
     local dap = require("dap")
@@ -109,41 +158,5 @@ return {
     dap.listeners.before.event_exited["dapui_config"] = function()
       dapui.close()
     end
-
-    -- Keymaps
-    vim.keymap.set("n", "<leader>da", function()
-      vim.notify("Starting debug session...", vim.log.levels.INFO)
-      dap.continue()
-    end, { desc = "Start Debugging" })
-
-    vim.keymap.set("n", "<leader>du", function()
-      dapui.toggle()
-    end, { desc = "Toggle Debug UI" })
-
-    vim.keymap.set("n", "<leader>dr", function()
-      dap.repl.toggle()
-    end, { desc = "Toggle Debug REPL" })
-
-    vim.keymap.set("n", "<leader>dl", function()
-      local log_file = vim.fn.stdpath("data") .. "/dap.log"
-      vim.cmd("edit " .. log_file)
-    end, { desc = "Open DAP Log" })
-
-    vim.keymap.set("n", "<leader>dc", dap.continue, { desc = "Continue" })
-    vim.keymap.set("n", "<leader>do", dap.step_over, { desc = "Step Over" })
-    vim.keymap.set("n", "<leader>di", dap.step_into, { desc = "Step Into" })
-
-    vim.keymap.set("n", "<leader>dlp", function()
-      require("dap").set_breakpoint(nil, nil, vim.fn.input("Log message: "))
-    end, { desc = "Logpoint" })
-
-    -- Breakpoints
-    vim.keymap.set("n", "<leader>db", function()
-      require("dap").toggle_breakpoint()
-    end, { desc = "Toggle Breakpoint" })
-
-    vim.keymap.set("n", "<leader>dB", function()
-      require("dap").set_breakpoint(vim.fn.input("Condition: "))
-    end, { desc = "Conditional Breakpoint" })
   end,
 }
