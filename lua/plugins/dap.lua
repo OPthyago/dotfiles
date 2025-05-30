@@ -210,13 +210,6 @@ return {
       desc = "Terminate",
     },
     {
-      "<leader>dw",
-      function()
-        require("dap.ui.widgets").hover()
-      end,
-      desc = "Widgets",
-    },
-    {
       "<leader>du",
       function()
         require("dapui").toggle()

@@ -169,6 +169,13 @@ return {
         end,
         desc = "Testes: Executar com Coverage",
       },
+      {
+        "<leader>tw",
+        function()
+          require("neotest").run.run({ extra_args = { "--watch" } })
+        end,
+        desc = "Testes: Executar com Watch",
+      },
     },
   },
 }
