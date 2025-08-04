@@ -11,6 +11,7 @@ return {
         "typescript-language-server",
         "css-lsp",
         "angular-language-server",
+        "gopls",
       })
     end,
   },
@@ -30,6 +31,7 @@ return {
       end,
       ---@type lspconfig.options
       servers = {
+        gopls = {},
         cssls = {},
         tailwindcss = {
           root_dir = function(...)
