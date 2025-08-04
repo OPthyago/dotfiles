@@ -14,7 +14,6 @@ local lsp_on_save_group = vim.api.nvim_create_augroup("LspOnSaveActions", { clea
 vim.api.nvim_create_autocmd("BufWritePre", {
   group = lsp_on_save_group,
   pattern = { "*.ts", "*.tsx", "*.js", "*.jsx" },
-  -- A forma mais confiável de acionar o "Organize Imports" para tsserver
   callback = function(args)
     local params = {
       command = "_typescript.organizeImports",

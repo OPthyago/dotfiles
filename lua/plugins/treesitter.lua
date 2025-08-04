@@ -42,6 +42,35 @@ return { -- Highlight, edit, and navigate code
       additional_vim_regex_highlighting = { "ruby" },
     },
     indent = { enable = true, disable = { "ruby" } },
+    textobjects = {
+      select = {
+        enable = true,
+        lookahead = true, -- Ajuda a selecionar objetos de forma mais inteligente
+        keymaps = {
+          -- Mnemônicos: "a" = around, "i" = inside
+          -- "f" = function, "c" = class, "l" = loop, etc.
+          ["af"] = "@function.outer",
+          ["if"] = "@function.inner",
+          ["ac"] = "@class.outer",
+          ["ic"] = "@class.inner",
+          ["al"] = "@loop.outer",
+          ["il"] = "@loop.inner",
+          ["aa"] = "@parameter.outer",
+          ["ia"] = "@parameter.inner",
+          ["ai"] = "@conditional.outer",
+          ["ii"] = "@conditional.inner",
+        },
+      },
+    },
+    incremental_selection = {
+      enable = true,
+      keymaps = {
+        init_selection = "<CR>",
+        node_incremental = "<CR>", -- Expande a seleção
+        scope_incremental = false, -- Desativado para simplicidade
+        node_decremental = "<BS>", -- Encolhe a seleção
+      },
+    },
   },
   -- There are additional nvim-treesitter modules that you can use to interact
   -- with nvim-treesitter. You should go explore a few and see what interests you:

@@ -13,6 +13,7 @@ return {
         "angular-language-server",
         "gopls",
         "prettierd",
+        "eslint_d",
       })
     end,
   },
