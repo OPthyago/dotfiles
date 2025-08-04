@@ -12,6 +12,7 @@ return {
         "css-lsp",
         "angular-language-server",
         "gopls",
+        "prettierd",
       })
     end,
   },
@@ -43,26 +44,31 @@ return {
             return require("lspconfig.util").root_pattern(".git")(...)
           end,
           single_file_support = false,
-          -- ↓↓↓ Configurações específicas do tsserver para desativar linting ↓↓↓
           on_attach = function(client, bufnr)
-            -- Garante que as capacidades de formatação estão desligadas
             client.server_capabilities.documentFormattingProvider = false
             client.server_capabilities.documentRangeFormattingProvider = false
-
-            -- Desativa diagnósticos (mensagens de erro) do tsserver
-            -- vim.lsp.handlers["textDocument/publishDiagnostics"] = function() end
           end,
           settings = {
             typescript = {
               inlayHints = {
-                includeInlayParameterNameHints = "literal",
-                -- ... (restante das configurações)
+                includeInlayParameterNameHints = "all", -- 'all', 'literals', 'none'
+                includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayVariableTypeHints = true,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+                includeInlayEnumMemberValueHints = true,
               },
             },
             javascript = {
               inlayHints = {
                 includeInlayParameterNameHints = "all",
-                -- ... (restante das configurações)
+                includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayVariableTypeHints = true,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+                includeInlayEnumMemberValueHints = true,
               },
             },
           },
