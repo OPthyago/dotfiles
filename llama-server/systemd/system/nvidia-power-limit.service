@@ -1,0 +1,10 @@
+[Unit]
+Description=Set NVIDIA GPU power limit to 450W (eficiencia termica/energia)
+After=systemd-modules-load.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/nvidia-smi -pl 450
+
+[Install]
+WantedBy=multi-user.target

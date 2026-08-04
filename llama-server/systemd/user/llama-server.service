@@ -1,0 +1,15 @@
+[Unit]
+Description=llama.cpp server (OpenAI-compatible, Qwen3.6-27B)
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/thyagoop/.config/llama-server/run.sh
+Restart=on-failure
+RestartSec=5
+StartLimitIntervalSec=300
+StartLimitBurst=5
+Nice=5
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,15 @@
+[Unit]
+Description=llama.cpp FIM server (autocomplete nvim, Qwen2.5-Coder-3B)
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/thyagoop/.config/llama-server/run-fim.sh
+Restart=on-failure
+RestartSec=5
+StartLimitIntervalSec=300
+StartLimitBurst=5
+Nice=10
+
+[Install]
+WantedBy=default.target
