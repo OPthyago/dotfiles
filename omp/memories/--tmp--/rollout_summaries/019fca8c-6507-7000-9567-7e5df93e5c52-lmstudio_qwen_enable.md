@@ -1,0 +1,4 @@
+thread_id: 019fca8c-6507-7000-9567-7e5df93e5c52
+updated_at: 1785810186
+
+User runs a local LM Studio setup (model qwen/qwen3.6-27b) via an OMP agent harness. Discussed lack of content censorship (only baseline: no help building weapons/explosives; cybersecurity research/defense is fair game; no attacking third-party systems without authorization). User asked why responses were fast/no extended thinking. Root cause: qwen3.6-27b supports reasoning/thinking but it was disabled by config. Fixed by setting 'llm.prediction.reasoning.enableThinking': true in ~/.lmstudio/.internal/user-concrete-model-default-config/qwen/qwen3.6-27b.json and reloading model via lms load; also OMP session config ~/.omp/agent/config.yml has 'defaultThinkingLevel' setting (set to high). Verified via direct curl to LM Studio API (http://127.0.0.1:1234/v1/chat/completions) checking response.usage.completion_tokens_details.reasoning_tokens and message.reasoning_content presence.

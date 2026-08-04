@@ -1,0 +1,4 @@
+thread_id: 019fca95-b5e9-7000-93ee-f775c5b269e9
+updated_at: 1785813261
+
+User evaluated self-hosted project/task management tools for their NAS (which already runs Paperless at 192.168.0.11), wanting a Trello-like kanban board controllable by an AI agent via MCP. Assistant recommended Plane (Linear/Jira-like, official MCP server, Docker self-hosted, PostgreSQL+Redis+Django) as primary choice, with Kan (lighter, Node-based, Trello-like, also has official MCP) as a fallback if NAS resources are limited. Neither tool has native Google Calendar integration; suggested workaround is running a separate Google Calendar MCP server alongside Plane's MCP so the agent can cross-reference tasks and calendar events, or using n8n/Make for actual sync if needed. OpenProject was noted as having more mature but heavier Google Calendar/iCal integration. User joked that setting up this infra itself would become a Plane ticket (meta-bootstrapping).
