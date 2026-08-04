@@ -49,6 +49,27 @@ vim.keymap.set("n", "<leader>s", "<C-w>s", { desc = "Split Horizontally" }) -- C
 vim.keymap.set("n", "<leader>se", "<C-w>=", { desc = "Make Splits Equal" })
 vim.keymap.set("n", "<leader>sx", ":close<CR>", { desc = "Close Split" }) -- Changed from 'xs' to 'sx'
 
+-- Seamless ctrl+hjkl navigation: move between Neovim splits, then hand off to the
+-- multiplexer (herdr or tmux) once the current window is already at that edge.
+-- The herdr side forwards ctrl+hjkl into (n)vim panes via ~/.local/bin/herdr-nav.
+local nav_pane = { h = "left", j = "down", k = "up", l = "right" }
+local nav_tmux = { h = "-L", j = "-D", k = "-U", l = "-R" }
+
+for key, direction in pairs(nav_pane) do
+  vim.keymap.set({ "n", "t" }, "<C-" .. key .. ">", function()
+    local from = vim.api.nvim_get_current_win()
+    vim.cmd.wincmd(key)
+    if vim.api.nvim_get_current_win() ~= from then
+      return
+    end
+    if vim.env.HERDR_PANE_ID then
+      vim.system({ "herdr", "pane", "focus", "--direction", direction, "--pane", vim.env.HERDR_PANE_ID })
+    elseif vim.env.TMUX then
+      vim.system({ "tmux", "select-pane", nav_tmux[key] })
+    end
+  end, { desc = "Navigate " .. direction .. " (split/pane)" })
+end
+
 -- Tabs
 vim.keymap.set("n", "<leader>to", ":tabnew<CR>", { desc = "[T]ab [O]pen" })
 vim.keymap.set("n", "<leader>tx", ":tabclose<CR>", { desc = "[T]ab [C]lose" })

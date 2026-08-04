@@ -27,3 +27,14 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   end,
   desc = "Organiza os imports ao salvar (JS/TS)",
 })
+
+-- Automaticamente verifica alterações no disco para evitar o aviso "Do you really want to write to it"
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
+  pattern = "*",
+  callback = function()
+    if vim.fn.getcmdwintype() == "" then
+      vim.cmd("checktime")
+    end
+  end,
+  desc = "Checa se o arquivo foi alterado no disco",
+})

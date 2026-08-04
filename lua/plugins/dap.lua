@@ -3,7 +3,7 @@ return {
   dependencies = {
     "rcarriga/nvim-dap-ui",
     {
-      "williamboman/mason.nvim",
+      "mason-org/mason.nvim",
       opts = function(_, opts)
         opts.ensure_installed = opts.ensure_installed or {}
         table.insert(opts.ensure_installed, "js-debug-adapter")

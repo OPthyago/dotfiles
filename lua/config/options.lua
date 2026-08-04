@@ -38,3 +38,5 @@ vim.o.clipboard = "unnamedplus" -- Sync clipboard between OS and Neovim. (defaul
 vim.wo.number = true -- Make line numbers default (default: false)
 vim.o.whichwrap = "bs<>[]hl" -- Which "horizontal" keys are allowed to travel to prev/next line (default: 'b,s')
 vim.wo.signcolumn = "yes" -- Keep signcolumn on by default (default: 'auto')
+vim.opt.backupcopy = "yes" -- Overwrite file in-place instead of creating new inode (prevents timestamp issues with dev servers/watchers)
+vim.opt.autoread = true -- Auto-reload file when changed externally
