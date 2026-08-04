@@ -1,0 +1,44 @@
+providers: 
+  webSearchOrder: 
+    - gemini
+    - perplexity
+    - anthropic
+    - codex
+    - xai
+    - zai
+    - exa
+    - tinyfish
+    - jina
+    - kagi
+    - tavily
+    - firecrawl
+    - brave
+    - kimi
+    - parallel
+    - synthetic
+    - searxng
+    - startpage
+    - duckduckgo
+    - ecosia
+    - google
+    - mojeek
+    - public
+modelRoles: 
+  default: llama-cpp/qwen3.6-27b
+  smol: llama-cpp/qwen3.6-27b
+  slow: anthropic/claude-opus-5:max
+  tiny: llama-cpp/qwen3.6-27b
+  designer: anthropic/claude-opus-5:max
+  advisor: anthropic/claude-opus-5:max
+symbolPreset: nerd
+theme: 
+  dark: dark-catppuccin
+setupVersion: 1
+defaultThinkingLevel: auto
+features: 
+  unexpectedStopDetection: true
+memory: 
+  backend: local
+autolearn: 
+  enabled: true
+hideThinkingBlock: false
