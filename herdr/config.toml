@@ -1,0 +1,39 @@
+# herdr configuration — espelha o .tmux.conf deste mesmo repo (prefixo,
+# splits, zoom, mouse, tema catppuccin). Instalar em ~/.config/herdr/config.toml
+# (no container oh-my-pi isso é feito por symlink, ver entrypoint.sh).
+#
+# Referência completa de todas as chaves: `herdr --default-config`.
+
+[theme]
+# tmux.conf: set -g @catppuccin_flavor "mocha" — catppuccin já é o default do
+# herdr, fixado aqui pra não depender do default mudar em versão futura.
+name = "catppuccin"
+
+[keys]
+# tmux.conf: set -g prefix C-a / unbind C-b / bind-key C-a send-prefix
+prefix = "ctrl+a"
+
+# tmux.conf: unbind %; bind | split-window -h  (panes lado a lado)
+split_vertical = "prefix+|"
+# tmux.conf: unbind '"'; bind - split-window -v (panes empilhados) — já é o
+# default do herdr, mantido explícito pra documentar a origem.
+split_horizontal = "prefix+minus"
+
+# tmux.conf: bind -r m resize-pane -Z (zoom no pane atual)
+zoom = "prefix+m"
+
+# Navegação entre panes com hjkl (equivalente ao vim-tmux-navigator do
+# tmux.conf) já é o default do herdr: focus_pane_left/down/up/right =
+# prefix+h/j/k/l. Não usamos ctrl+hjkl direto (sem prefix) de propósito —
+# isso roubaria o Ctrl+h/j/k/l que o nvim usa pra navegar janelas internas.
+
+# tmux.conf: bind r source-file ~/.tmux.conf — equivalente mais próximo é
+# reload_config, que já é o default do herdr (prefix+shift+r), mantido.
+
+[ui]
+# tmux.conf: set -g mouse on
+mouse_capture = true
+
+# Sem equivalente a tmux-resurrect/tmux-continuum aqui de propósito: o herdr
+# É o processo persistente (não uma sessão dentro de outro multiplexador),
+# então não existe "salvar e restaurar sessão" — o server já fica de pé.
