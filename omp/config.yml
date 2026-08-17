@@ -24,17 +24,18 @@ providers:
     - mojeek
     - public
 modelRoles: 
-  default: llama-cpp/qwen3.6-27b
-  smol: llama-cpp/qwen3.6-27b
+  default: vllm/qwen3.8-27b
+  smol: cursor/cursor-grok-4.6-high
   slow: anthropic/claude-opus-5:max
-  tiny: llama-cpp/qwen3.6-27b
+  tiny: vllm/qwen3.8-27b
   designer: anthropic/claude-opus-5:max
-  advisor: anthropic/claude-opus-5:max
+  advisor: cursor/kimi-k3-max:max
+  vision: google-antigravity/gemini-3.1-pro
 symbolPreset: nerd
 theme: 
   dark: dark-catppuccin
 setupVersion: 1
-defaultThinkingLevel: auto
+defaultThinkingLevel: "off"
 features: 
   unexpectedStopDetection: true
 memory: 
@@ -42,3 +43,7 @@ memory:
 autolearn: 
   enabled: true
 hideThinkingBlock: false
+task: 
+  enableEffort: true
+security: 
+  enabled: true
