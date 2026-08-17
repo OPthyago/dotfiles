@@ -35,7 +35,7 @@ symbolPreset: nerd
 theme: 
   dark: dark-catppuccin
 setupVersion: 1
-defaultThinkingLevel: "off"
+defaultThinkingLevel: auto
 features: 
   unexpectedStopDetection: true
 memory: 
