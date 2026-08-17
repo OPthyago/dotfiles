@@ -6,3 +6,9 @@ debug
 foo.*
 *.log
 data
+
+# nunca commitar segredos / variaveis de ambiente
+.env
+.env.*
+*.env.local
+omp/.env
