@@ -1,0 +1,16 @@
+[Unit]
+Description=vLLM server (OpenAI-compatible, Qwen3.8-27B NVFP4)
+After=network.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+ExecStart=/home/thyagoop/.local/share/vllm/run.sh
+Restart=on-failure
+RestartSec=10
+Nice=5
+Environment=HOME=/home/thyagoop
+
+[Install]
+WantedBy=default.target
